@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { PrismaClient } from "@prisma/client";
 import { Client, auth } from "twitter-api-sdk";
 
-import { config } from "@/config";
-import { TWITTER_SCOPES, authOptions } from "@/pages/api/auth/[...nextauth]";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const prisma = new PrismaClient();
 
