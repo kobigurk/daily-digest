@@ -44,14 +44,13 @@ async function main() {
         const startOfDay = new Date(Date.now() - DAY_IN_MS);
         startOfDay.setHours(0, 0, 0, 0);
 
-        // const bookmarks = await prisma.bookmark.findMany({
-        //     where: {
-        //         addedAt: {
-        //             gte: startOfDay,
-        //         },
-        //     },
-        // });
-        const bookmarks = [] as any[];
+        const bookmarks = await prisma.bookmark.findMany({
+            where: {
+                addedAt: {
+                    gte: startOfDay,
+                },
+            },
+        });
         const openingMessage = `---\nNews for ${new Date().toLocaleDateString()}\n`;
         const newsForVoice = [medicineForToday, openingMessage];
         const newsForText = [medicineForToday, openingMessage];
