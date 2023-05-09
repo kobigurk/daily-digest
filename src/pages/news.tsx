@@ -25,7 +25,7 @@ export default function News({ news }: {
 }) {
     return (
         <main
-            className={`flex min-h-screen flex-col items-center justify-between p-24`}>
+            className={`flex min-h-screen flex-col items-center p-24`}>
             {news.map((news) => (
                 <div className="underline" key={news.key}>
                     <a href={`/newsItem/${news.key}`}>{news.link}</a>

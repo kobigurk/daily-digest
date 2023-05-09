@@ -28,14 +28,14 @@ async function main() {
         }
         const currentDate = new Date();
         const currentHour = currentDate.getHours();
-        if (currentHour < 5) {
-            console.log(`Too early, waiting for 8:00: ${currentHour}`);
+        if (currentHour < 2) {
+            console.log(`Too early, waiting for 2:00: ${currentHour}`);
             await delay(TEN_MINUTES_IN_MS);
             continue;
         }
         const api = new TodoistApi(config.todoist_token);
         const tasks = await api.getTasks({
-            filter: `${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDay()}}`,
+            filter: 'today',
             projectId: config.todoist_project_id,
         });
         const tasksText = tasks.length > 0 ? tasks.map((task) => task.content).join('.\n') : 'No tasks for today';
@@ -44,13 +44,14 @@ async function main() {
         const startOfDay = new Date(Date.now() - DAY_IN_MS);
         startOfDay.setHours(0, 0, 0, 0);
 
-        const bookmarks = await prisma.bookmark.findMany({
-            where: {
-                addedAt: {
-                    gte: startOfDay,
-                },
-            },
-        });
+        // const bookmarks = await prisma.bookmark.findMany({
+        //     where: {
+        //         addedAt: {
+        //             gte: startOfDay,
+        //         },
+        //     },
+        // });
+        const bookmarks = [] as any[];
         const openingMessage = `---\nNews for ${new Date().toLocaleDateString()}\n`;
         const newsForVoice = [medicineForToday, openingMessage];
         const newsForText = [medicineForToday, openingMessage];
@@ -69,13 +70,14 @@ async function main() {
             newsForVoice.push(noNews);
             newsForText.push(noNews);
         }
+        const newsItemDate = new Date();
         logger.info(`News: ${newsForText.join('\n')}`);
         const audio = await textToSpeech(newsForVoice.join('\n'), 'Rachel');
-        notifyNews(newsForText.join('\n'), audio);
+        notifyNews([...newsForText, `---\n${config.nextauth_url}/newsItem/${newsItemDate.getTime()}`].join('\n'), audio);
 
         await prisma.news.create({
             data: {
-                createdAt: new Date(),
+                createdAt: newsItemDate,
                 audio,
                 newsForAudio: newsForVoice.join('\n'),
                 newsForText: newsForText.join('\n'),
