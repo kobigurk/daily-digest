@@ -26,26 +26,27 @@ async function main() {
             await delay(TEN_MINUTES_IN_MS);
             continue;
         }
-        const currentHour = new Date().getUTCHours();
+        const currentDate = new Date();
+        const currentHour = currentDate.getHours();
         if (currentHour < 5) {
-            console.log(`Too early, waiting for 8:00 UTC: ${currentHour}`);
+            console.log(`Too early, waiting for 8:00: ${currentHour}`);
             await delay(TEN_MINUTES_IN_MS);
             continue;
         }
         const api = new TodoistApi(config.todoist_token);
         const tasks = await api.getTasks({
-            filter: 'today',
+            filter: `${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDay()}}`,
             projectId: config.todoist_project_id,
         });
         const tasksText = tasks.length > 0 ? tasks.map((task) => task.content).join('.\n') : 'No tasks for today';
         const medicineForToday = `Medicine Summary:\n${tasksText}\n`;
         logger.info(`Medicine for today: ${medicineForToday}`);
         const startOfDay = new Date(Date.now() - DAY_IN_MS);
-        startOfDay.setUTCHours(0, 0, 0, 0);
+        startOfDay.setHours(0, 0, 0, 0);
 
         const bookmarks = await prisma.bookmark.findMany({
             where: {
-                createdAt: {
+                addedAt: {
                     gte: startOfDay,
                 },
             },

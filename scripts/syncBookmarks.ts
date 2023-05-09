@@ -31,6 +31,7 @@ async function main() {
                         create: {
                             tweetId: bookmark.id,
                             author: authors[bookmark.author_id!].username,
+                            addedAt: new Date(),
                             createdAt: bookmark.created_at!,
                             text: bookmark.text,
                             accountId: account.id,

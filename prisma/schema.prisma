@@ -60,6 +60,7 @@ model Bookmark {
   tweetId   String   @id
   author    String
   text      String
+  addedAt         DateTime
   createdAt DateTime
   accountId String
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
