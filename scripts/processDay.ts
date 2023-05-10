@@ -15,10 +15,11 @@ const prisma = new PrismaClient();
 
 async function main() {
     while (true) {
+        const currentDate = new Date();
         const currentDayNews = await prisma.news.findFirst({
             where: {
                 createdAt: {
-                    gte: new Date(Date.now() - DAY_IN_MS),
+                    gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0, 0)
                 },
             },
         });
@@ -26,7 +27,6 @@ async function main() {
             await delay(TEN_MINUTES_IN_MS);
             continue;
         }
-        const currentDate = new Date();
         const currentHour = currentDate.getHours();
         if (currentHour < 2) {
             console.log(`Too early, waiting for 2:00: ${currentHour}`);
